@@ -11,6 +11,8 @@ flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 flask-restful = "*"
 mysqlclient = "*"
+flask-wtf = "*"
+wtforms-sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang = "en">
+   <head></head>
+   <body>
+      
+      
+      <hr/>
+      {%- for message in get_flashed_messages() %}
+         {{ message }}
+      {%- endfor %}
+		
+      
+      
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Artist</th>
+               <th>Album</th>
+            </tr>
+         </thead>
+
+         <tbody>
+            {% for song in songs %}
+               <tr>
+                  <td>{{ song.title }}</td>
+                  <td>{{ song.artist.name }}</td>
+                  <td>{{ song.album.name }}</td>
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+   </body>
+</html>

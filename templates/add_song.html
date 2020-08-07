@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang = "en">
+   <head></head>
+   <body>
+        <form action="/add_song" method="post">
+            {{ form.csrf_token }}
+            {{ form.artists }}
+            {{ form.albums }}
+            <input type="submit" value="">
+        </form>
+   </body>
+</html>
