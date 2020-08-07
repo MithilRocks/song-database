@@ -1,12 +1,15 @@
-<!DOCTYPE html>
-<html lang = "en">
-   <head></head>
-   <body>
-        <form action="/add_song" method="post">
-            {{ form.csrf_token }}
-            {{ form.artists }}
-            {{ form.albums }}
-            <input type="submit" value="">
-        </form>
-   </body>
-</html>
+{% extends "base.html" %}
+{% block title %}All Songs{% endblock %}
+{% block content %}
+<form action="/add_song" method="post" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    {{ form.title.label }}
+    {{ form.title }}
+    {{ form.artists.label }}
+    {{ form.artists }}
+    {{ form.albums.label }}
+    {{ form.albums }}
+    {{ form.file }}
+    <input type="submit" value="Add Song">
+</form>
+{% endblock %}

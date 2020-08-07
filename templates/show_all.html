@@ -1,34 +1,28 @@
-<!DOCTYPE html>
-<html lang = "en">
-   <head></head>
-   <body>
-      
-      
-      <hr/>
-      {%- for message in get_flashed_messages() %}
-         {{ message }}
-      {%- endfor %}
-		
-      
-      
-      <table>
-         <thead>
-            <tr>
-               <th>Name</th>
-               <th>Artist</th>
-               <th>Album</th>
-            </tr>
-         </thead>
-
-         <tbody>
-            {% for song in songs %}
-               <tr>
-                  <td>{{ song.title }}</td>
-                  <td>{{ song.artist.name }}</td>
-                  <td>{{ song.album.name }}</td>
-               </tr>
-            {% endfor %}
-         </tbody>
-      </table>
-   </body>
-</html>
+{% extends "base.html" %}
+{% block title %}All Songs{% endblock %}
+{% block content %}
+<a href="{{ url_for('add_song') }}">Add Song</a>
+<hr>
+<table>
+   <thead>
+      <tr>
+         <th>Name</th>
+         <th>Artist</th>
+         <th>Album</th>
+         <th>Destination</th>
+         <th>Delete</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for song in songs %}
+         <tr>
+            <td>{{ song.title }}</td>
+            <td>{{ song.artist.name }}</td>
+            <td>{{ song.album.name }}</td>
+            <td>{{ song.destination }}</td>
+            <td><a href="{{ url_for('delete_song', id=song.id) }}">Delete Song</td>
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>
+{% endblock %}
