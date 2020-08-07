@@ -16,10 +16,14 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'songs.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret'
-app.config['UPLOAD_FOLDER'] = os.path.join(basedir,'songs')
+app.config['UPLOAD_FOLDER'] = os.path.join(basedir,'static')
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() == 'mp3'
 
 class Artist(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -57,10 +61,16 @@ def all_albums():
     return Album.query
 
 class AddSongForm(FlaskForm):
-    title = StringField('Song name')
+    title = StringField('Song name', validators=[validators.input_required(message='Song name required')])
     artists = QuerySelectField(query_factory=all_artists, get_label='name')
     albums = QuerySelectField(query_factory=all_albums)
     file = FileField()
+
+class AddArtistForm(FlaskForm):
+    name = StringField('Artist', validators=[validators.input_required(message='Artist name required')])
+
+class AddAlbumForm(FlaskForm):
+    name = StringField('Album', validators=[validators.input_required(message='Album name required')])
 
 class ArtistSchema(Schema):
     id = fields.fields.Int()
@@ -93,24 +103,54 @@ def add_song():
     form = AddSongForm()
     if form.validate_on_submit():
 
+        if 'file' not in request.files:
+            flash('No file part')
+            return render_template('add_song.html',form=form)
+            
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
-        if file:
+            return render_template('add_song.html',form=form)
+        if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        
-        new_song = Song(
-            title=form.title.data,
-            artist=form.artists.data,
-            album=form.albums.data,
-            destination = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        )
-        db.session.add(new_song)
-        db.session.commit()
+            new_song = Song(
+                title=form.title.data,
+                artist=form.artists.data,
+                album=form.albums.data,
+                destination = filename
+            )
+            db.session.add(new_song)
+            db.session.commit()
+        else:
+            flash('Only mp3 files allowed')
+            return render_template('add_song.html',form=form)
         return redirect('/')
     return render_template('add_song.html',form=form)
+
+@app.route('/artist/add',methods=['GET','POST'])
+def add_artist():
+    form = AddArtistForm()
+    if form.validate_on_submit():
+        new_artist = Artist(
+            name=form.name.data
+        )
+        db.session.add(new_artist)
+        db.session.commit()
+        return redirect('/song/add')
+    return render_template('add_artist.html',form=form)
+
+@app.route('/album/add',methods=['GET','POST'])
+def add_album():
+    form = AddAlbumForm()
+    if form.validate_on_submit():
+        new_album = Album(
+            name=form.name.data
+        )
+        db.session.add(new_album)
+        db.session.commit()
+        return redirect('/song/add')
+    return render_template('add_album.html',form=form)
 
 @app.route('/song/delete/<id>', methods=['GET','DELETE'])
 def delete_song(id):
@@ -119,8 +159,17 @@ def delete_song(id):
         flash('Song does not exist')
         return redirect('/')
     db.session.delete(song)
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], song.destination))
     db.session.commit()
     return redirect('/')
+
+@app.route('/song/play/<id>', methods=['GET'])
+def play_song(id):
+    song = Song.query.get(id)
+    if not song:
+        flash('Song does not exist')
+        return redirect('/')
+    return render_template('play_music.html', song=song)
 
 if __name__ == '__main__':
    app.run(debug=True)

@@ -1,15 +1,30 @@
 {% extends "base.html" %}
-{% block title %}All Songs{% endblock %}
+{% block title %}All Song{% endblock %}
 {% block content %}
-<form action="/add_song" method="post" enctype="multipart/form-data">
+{%- for message in get_flashed_messages() %}
+    Error: {{ message }}
+    <br>
+{%- endfor %}
+<form action="/song/add" method="post" enctype="multipart/form-data">
     {{ form.csrf_token }}
     {{ form.title.label }}
     {{ form.title }}
+    <ul>
+    {% for error in form.title.errors %}
+        <li style="color:red;">{{ error }}</li>
+    {% endfor %}
+    </ul>
     {{ form.artists.label }}
-    {{ form.artists }}
+    {{ form.artists }} <a href="{{ url_for('add_artist') }}">Add New Artist</a>
+    <br>
+    <br>
     {{ form.albums.label }}
-    {{ form.albums }}
+    {{ form.albums }} <a href="{{ url_for('add_album') }}">Add New Album</a>
+    <br>
+    <br>
     {{ form.file }}
+    <br>
+    <br>
     <input type="submit" value="Add Song">
 </form>
 {% endblock %}

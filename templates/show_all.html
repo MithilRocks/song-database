@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 {% block title %}All Songs{% endblock %}
 {% block content %}
-<a href="{{ url_for('add_song') }}">Add Song</a>
-<hr>
-<table>
+<ul>
+   <li><a href="{{ url_for('add_song') }}">Add Song</a></li>
+   <li><a href="{{ url_for('add_artist') }}">Add Artist</a></li>
+   <li><a href="{{ url_for('add_album') }}">Add Album</a></li>
+</ul>
+{% if songs %}
+<table border="2">
    <thead>
       <tr>
          <th>Name</th>
          <th>Artist</th>
          <th>Album</th>
          <th>Destination</th>
+         <th>Download</th>
          <th>Delete</th>
       </tr>
    </thead>
@@ -19,10 +24,14 @@
             <td>{{ song.title }}</td>
             <td>{{ song.artist.name }}</td>
             <td>{{ song.album.name }}</td>
-            <td>{{ song.destination }}</td>
-            <td><a href="{{ url_for('delete_song', id=song.id) }}">Delete Song</td>
+            <td><a href="{{ url_for('play_song', id=song.id) }}">Play Song</a></td>
+            <td><a href="{{ url_for('static', filename=song.destination) }}" download>Download Song</a></td>
+            <td><a href="{{ url_for('delete_song', id=song.id) }}">Delete Song</a></td>
          </tr>
       {% endfor %}
    </tbody>
 </table>
+{% else %}
+<p>No songs available. Add songs to create playlist</p>
+{% endif %}
 {% endblock %}
