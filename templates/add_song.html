@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 {% block title %}All Song{% endblock %}
 {% block content %}
+<h1>Add a song!</h1>
 {%- for message in get_flashed_messages() %}
-    Error: {{ message }}
+    Error: <i>{{ message }}</i>
     <br>
 {%- endfor %}
+<br>
+<a href="{{ url_for('songs') }}"><< Go back to all Songs</a>
+<br>
+<br>
 <form action="/song/add" method="post" enctype="multipart/form-data">
     {{ form.csrf_token }}
     {{ form.title.label }}

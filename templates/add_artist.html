@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Add Artist{% endblock %}
 {% block content %}
+<h1>Add an artist</h1>
+<a href="{{ url_for('add_song') }}"><< Go back to add a Song</a>
+<br>
+<a href="{{ url_for('songs') }}"><< Go back to all Songs</a>
+<br>
+<br>
 {%- for message in get_flashed_messages() %}
     Error: {{ message }}
     <br>
@@ -14,7 +20,6 @@
         <li style="color:red;">{{ error }}</li>
     {% endfor %}
     </ul>
-    <br>
     <input type="submit" value="Add Artist">
 </form>
 {% endblock %}

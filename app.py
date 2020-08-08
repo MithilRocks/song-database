@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, make_response, redirect, Blueprint, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow, fields, Schema
-from flask_restful import Resource, Api
 from flask_wtf import FlaskForm
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms import StringField, FileField, validators
@@ -9,7 +8,6 @@ from werkzeug.utils import secure_filename
 import os 
 
 app = Flask(__name__)
-api = Api(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Database
@@ -52,7 +50,7 @@ class Song(db.Model):
     destination = db.Column(db.String(500))
 
     def __repr__(self):
-        return '<Song %s>' % self.title
+        return self.title
 
 def all_artists():
     return Artist.query
@@ -65,6 +63,11 @@ class AddSongForm(FlaskForm):
     artists = QuerySelectField(query_factory=all_artists, get_label='name')
     albums = QuerySelectField(query_factory=all_albums)
     file = FileField()
+
+class SearchSongForm(FlaskForm):
+    title = StringField()
+    artist = StringField()
+    album = StringField()
 
 class AddArtistForm(FlaskForm):
     name = StringField('Artist', validators=[validators.input_required(message='Artist name required')])
@@ -94,9 +97,19 @@ songs_schema = SongSchema(many=True)
 
 @app.route('/',methods=['GET','POST'])
 def songs():
+    form = SearchSongForm() 
+    message = ''
     if request.method == 'GET':
         songs = Song.query.all() 
-        return render_template('show_all.html', songs = songs_schema.dump(songs))
+        if len(songs) == 0:
+            message = 'No songs available. Add songs to create playlist'
+    if form.validate_on_submit():
+        songs = Song.query.join(Song.artist, Song.album)\
+                .filter(Song.title.contains(form.title.data)).filter(Artist.name.contains(form.artist.data))\
+                .filter(Album.name.contains(form.album.data)).all()
+        if len(songs) == 0:
+            message = 'Your query returned 0 searches'
+    return render_template('show_all.html', songs = songs_schema.dump(songs), form=form, message=message)
 
 @app.route('/song/add',methods=['GET','POST'])
 def add_song():

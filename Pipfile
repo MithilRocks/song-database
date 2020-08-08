@@ -13,6 +13,7 @@ flask-restful = "*"
 mysqlclient = "*"
 flask-wtf = "*"
 wtforms-sqlalchemy = "*"
+flask-whooshalchemy3 = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 {% block title %}All Songs{% endblock %}
 {% block content %}
-<ul>
-   <li><a href="{{ url_for('add_song') }}">Add Song</a></li>
-   <li><a href="{{ url_for('add_artist') }}">Add Artist</a></li>
-   <li><a href="{{ url_for('add_album') }}">Add Album</a></li>
-</ul>
+<h1>Welcome to Song Application!</h1>
+<form action="/" method="post" enctype="application/x-www-form-urlencoded">
+    {{ form.csrf_token }}
+    {{ form.title.label }}
+    {{ form.title }}
+    {{ form.artist.label }}
+    {{ form.artist }}
+    {{ form.album.label }}
+    {{ form.album }}
+    <input type="submit" value="Search Song">
+</form>
+<br>
+<li><a href="{{ url_for('add_song') }}">Add a Song</a></li>
+<br>
 {% if songs %}
 <table border="2">
    <thead>
@@ -32,6 +41,6 @@
    </tbody>
 </table>
 {% else %}
-<p>No songs available. Add songs to create playlist</p>
+<p>{{ message }}</p>
 {% endif %}
 {% endblock %}
