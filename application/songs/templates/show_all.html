@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}All Songs{% endblock %}
+{% block content %}
+<h1>Welcome to Song Application!</h1>
+<form action="/" method="post" enctype="application/x-www-form-urlencoded">
+    {{ form.csrf_token }}
+    {{ form.title.label }}
+    {{ form.title }}
+    {{ form.artist.label }}
+    {{ form.artist }}
+    {{ form.album.label }}
+    {{ form.album }}
+    <input type="submit" value="Search Song">
+</form>
+<br>
+{% if clear_search %}
+   <li><a href="{{ url_for('song_bp.songs') }}">Clear Search</a></li>
+   <br>
+{% endif %}
+<li><a href="{{ url_for('song_bp.add_song') }}">Add a Song</a></li>
+<br>
+{% if songs %}
+<table border="2">
+   <thead>
+      <tr>
+         <th>Name</th>
+         <th>Artist</th>
+         <th>Album</th>
+         <th>Destination</th>
+         <th>Download</th>
+         <th>Delete</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for song in songs %}
+         <tr>
+            <td>{{ song.title }}</td>
+            <td>{{ song.artist.name }}</td>
+            <td>{{ song.album.name }}</td>
+            <td><a href="{{ url_for('song_bp.play_song', id=song.id) }}">Play Song</a></td>
+            <td><a href="{{ url_for('static', filename=song.destination) }}" download>Download Song</a></td>
+            <td><a href="{{ url_for('song_bp.delete_song', id=song.id) }}">Delete Song</a></td>
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>
+{% else %}
+<p>{{ message }}</p>
+{% endif %}
+{% endblock %}

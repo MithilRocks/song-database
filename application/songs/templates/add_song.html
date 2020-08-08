@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}All Song{% endblock %}
+{% block content %}
+<h1>Add a song!</h1>
+{%- for message in get_flashed_messages() %}
+    Error: <i>{{ message }}</i>
+    <br>
+{%- endfor %}
+<br>
+<a href="{{ url_for('song_bp.songs') }}"><< Go back to all Songs</a>
+<br>
+<br>
+<form action="/song/add" method="post" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    {{ form.title.label }}
+    {{ form.title }}
+    <ul>
+    {% for error in form.title.errors %}
+        <li style="color:red;">{{ error }}</li>
+    {% endfor %}
+    </ul>
+    {{ form.artists.label }}
+    {{ form.artists }} <a href="{{ url_for('artist_bp.add_artist') }}">Add New Artist</a>
+    <br>
+    <br>
+    {{ form.albums.label }}
+    {{ form.albums }} <a href="{{ url_for('album_bp.add_album') }}">Add New Album</a>
+    <br>
+    <br>
+    {{ form.file }}
+    <br>
+    <br>
+    <input type="submit" value="Add Song">
+</form>
+{% endblock %}
