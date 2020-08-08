@@ -18,13 +18,14 @@ def allowed_file(filename):
 
 @song_bp.route('/',methods=['GET','POST'])
 def songs():
-    form = SearchSongForm() 
+    form = SearchSongForm(request.form) 
     message = ''
     clear_search = False
     if request.method == 'GET':
         songs = Song.query.all() 
         if len(songs) == 0:
             message = 'No songs available. Add songs to create playlist'
+        return render_template('show_all.html', songs = songs_schema.dump(songs), form=form, message=message, clear_search=clear_search)
     if form.validate_on_submit():
         clear_search = True
         songs = Song.query.join(Song.artist, Song.album)\
@@ -32,7 +33,13 @@ def songs():
                 .filter(Album.name.contains(form.album.data)).all()
         if len(songs) == 0:
             message = 'Your query returned 0 searches'
-    return render_template('show_all.html', songs = songs_schema.dump(songs), form=form, message=message, clear_search=clear_search)
+        return render_template('show_all.html', songs = songs_schema.dump(songs), form=form, message=message, clear_search=clear_search)
+    else:
+        clear_search = True
+        for fieldName, errorMessages in form.errors.items():
+            for err in errorMessages:
+                flash(str.capitalize(fieldName)+" "+err)
+    return render_template('show_all.html', form=form, message=message, clear_search=clear_search)
 
 @song_bp.route('/song/add',methods=['GET','POST'])
 def add_song():

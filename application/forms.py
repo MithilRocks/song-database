@@ -15,18 +15,18 @@ def all_albums():
     return Album.query
 
 class AddSongForm(FlaskForm):
-    title = StringField('Song name', validators=[validators.input_required(message='Song name required')])
+    title = StringField('Song name', validators=[validators.DataRequired(message='Song name required'), validators.Regexp('^[a-zA-Z0-9 \']*$', message="Must contain only letters numbers or underscore")])
     artists = QuerySelectField(query_factory=all_artists, get_label='name')
     albums = QuerySelectField(query_factory=all_albums, get_label='name')
     file = FileField('MP3 file', validators=[FileRequired()])
 
 class SearchSongForm(FlaskForm):
-    title = StringField()
-    artist = StringField()
-    album = StringField()
+    title = StringField('Title', [validators.Regexp('^[a-zA-Z0-9 \']*$', message="Must contain only letters numbers or underscore"), validators.Optional()])
+    artist = StringField('Artist', [validators.Regexp('^[a-zA-Z0-9 \']*$', message="Must contain only letters numbers or underscore"), validators.Optional()])
+    album = StringField('Album', [validators.Regexp('^[a-zA-Z0-9 \']*$', message="Must contain only letters numbers or underscore"), validators.Optional()])
 
 class AddArtistForm(FlaskForm):
-    name = StringField('Artist', validators=[validators.input_required(message='Artist name required')])
+    name = StringField('Artist', validators=[validators.DataRequired(message='Artist name required'), validators.Regexp('^[a-zA-Z0-9 \']*$', message="Must contain only letters numbers or underscore")])
 
 class AddAlbumForm(FlaskForm):
-    name = StringField('Album', validators=[validators.input_required(message='Album name required')])
+    name = StringField('Album', validators=[validators.DataRequired(message='Album name required'), validators.Regexp('^[a-zA-Z0-9 \']*$', message="Must contain only letters numbers or underscore")])
