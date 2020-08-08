@@ -1,6 +1,6 @@
 # Song Application in Flask (Task)
 
-To initialize the application, simply run the shell file `./install.sh` and then `python app.py`. This will take care of installing all the packages.
+To initialize the application, simply run the shell file `./install.sh` and then `python app.py`. This will take care of installing all the packages. (Note: this will install Python 3.7 as this is the version in which the app was made)
 
 In case the installation fails, please follow the following steps:
 
